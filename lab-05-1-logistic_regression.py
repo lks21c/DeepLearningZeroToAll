@@ -1,4 +1,3 @@
-b 5 Logistic Regression Classifier
 import tensorflow as tf
 import numpy as np
 
@@ -21,7 +20,7 @@ print("yshape shape = ", yshape.shape[0], yshape.shape[1])
 y_data = yshape
 numLabels = 1
 
-learningRate = 0.01
+learningRate = 0.1
 
 
 # placeholders for a tensor that will be always fed.
@@ -38,10 +37,10 @@ b = tf.Variable(tf.random_normal([1, numLabels],
 hypothesis = tf.sigmoid(tf.matmul(X, W) + b)
 
 # cost/loss function
-# cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
-#                        tf.log(1 - hypothesis))
+cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
+                       tf.log(1 - hypothesis))
 
-cost = tf.nn.l2_loss(hypothesis - Y, name="squared_error_cost")
+# cost = tf.nn.l2_loss(hypothesis - Y, name="squared_error_cost")
 
 train = tf.train.GradientDescentOptimizer(learning_rate=learningRate).minimize(cost)
 
