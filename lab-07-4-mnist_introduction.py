@@ -44,12 +44,12 @@ with tf.Session() as sess:
 
         for i in range(total_batch):
             batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-            c, _ = sess.run([cost, optimizer], feed_dict={
+            c, _, accr = sess.run([cost, optimizer, accuracy], feed_dict={
                             X: batch_xs, Y: batch_ys})
             avg_cost += c / total_batch
 
         print('Epoch:', '%04d' % (epoch + 1),
-              'cost =', '{:.9f}'.format(avg_cost))
+              'cost =', '{:.9f}'.format(avg_cost), accr)
 
     print("Learning finished")
 
