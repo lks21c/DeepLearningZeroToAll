@@ -3,7 +3,7 @@ import numpy as np
 
 tf.set_random_seed(777)  # for reproducibility
 
-trainX = np.loadtxt('/home/lks21c/repo/spark/userChurnList.csv', delimiter=',', dtype=np.float32)
+trainX = np.loadtxt('/d_drive/trainUserChurnList.csv', delimiter=',', dtype=np.float32)
 
 x_data = trainX[:, :-1]
 y_data = trainX[:, [-1]]
@@ -18,7 +18,8 @@ print(numFeatures)
 
 numLabels = 1
 
-learningRate = 0.1
+learningRate = 0.01
+iteration = 100000
 
 # placeholders for a tensor that will be always fed.
 X = tf.placeholder(tf.float32, shape=[None, numFeatures])
@@ -59,6 +60,9 @@ accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
 
 accuracy_summ = tf.summary.scalar("accuracy", accuracy)
 
+# Add ops to save and restore all the variables.
+saver = tf.train.Saver()
+
 # Launch graph
 with tf.Session() as sess:
     # Initialize TensorFlow variables
@@ -68,13 +72,15 @@ with tf.Session() as sess:
     writer = tf.summary.FileWriter("./logs/mylogi")
     writer.add_graph(sess.graph)
 
-    for step in range(27000):
+    for step in range(iteration):
         cost_val, _, accr, summary = sess.run([cost, train, accuracy, merged_summary], feed_dict={X: x_data, Y: y_data})
 
         writer.add_summary(summary, global_step=step)
 
         if step % 200 == 0:
             print(step, cost_val, accr)
+
+    save_path = saver.save(sess, "predictChurn.ckpt")
 
     # Accuracy report
     h, c, a = sess.run([hypothesis, predicted, accuracy],
