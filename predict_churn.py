@@ -19,7 +19,7 @@ print(numFeatures)
 numLabels = 1
 
 learningRate = 0.03
-iteration = 100000
+iteration = 10000000
 
 # placeholders for a tensor that will be always fed.
 X = tf.placeholder(tf.float32, shape=[None, numFeatures])
