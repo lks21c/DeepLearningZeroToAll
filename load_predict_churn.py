@@ -3,7 +3,7 @@ import numpy as np
 
 tf.set_random_seed(777)  # for reproducibility
 
-trainX = np.loadtxt('/d_drive/userChurnList.csv', delimiter=',', dtype=np.float32)
+trainX = np.loadtxt('/d_drive/trainUserChurnList.csv', delimiter=',', dtype=np.float32)
 
 x_data = trainX[:, :-1]
 y_data = trainX[:, [-1]]
