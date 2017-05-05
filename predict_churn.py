@@ -72,7 +72,7 @@ with tf.Session() as sess:
     writer = tf.summary.FileWriter("./logs/mylogi")
     writer.add_graph(sess.graph)
 
-    save_path = saver.save(sess, "/d_drive/model.ckpt")
+    save_path = saver.save(sess, "/d_drive/model/model.ckpt")
     print("Model saved in file: %s" % save_path)
 
     for step in range(iteration):

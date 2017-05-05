@@ -58,7 +58,7 @@ with tf.Session() as sess:
     # Initialize TensorFlow variables
     # sess.run(tf.global_variables_initializer())
 
-    saver.restore(sess, "/d_drive/model.ckpt")
+    saver.restore(sess, "/d_drive/model/model.ckpt")
 
     merged_summary = tf.summary.merge_all()
     writer = tf.summary.FileWriter("./logs/mylogi2")
