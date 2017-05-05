@@ -15,11 +15,10 @@ print(x_data.shape)
 print(y_data.shape)
 print(numFeatures)
 
-
 numLabels = 1
 
 learningRate = 0.01
-iteration = 252000
+iteration = 1
 
 # placeholders for a tensor that will be always fed.
 X = tf.placeholder(tf.float32, shape=[None, numFeatures])
@@ -31,7 +30,6 @@ W = tf.Variable(tf.random_normal([numFeatures, numFeatures],
 b = tf.Variable(tf.random_normal([1, numLabels],
                                  name="bias"))
 
-# Hypothesis using sigmoid: tf.div(1., 1. + tf.exp(tf.matmul(X, W)))
 layer1 = tf.sigmoid(tf.matmul(X, W) + b)
 
 W2 = tf.Variable(tf.random_normal([numFeatures, numFeatures]), name='weight2')
@@ -46,15 +44,7 @@ W4 = tf.Variable(tf.random_normal([numFeatures, 1]), name='weight4')
 b4 = tf.Variable(tf.random_normal([1]), name='bias4')
 hypothesis = tf.sigmoid(tf.matmul(layer3, W4) + b4)
 
-
 # cost/loss function
-cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
-                       tf.log(1 - hypothesis))
-
-cost_summ = tf.summary.scalar("cost", cost)
-
-train = tf.train.GradientDescentOptimizer(learning_rate=learningRate).minimize(cost)
-
 predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
 accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
 
@@ -66,22 +56,20 @@ saver = tf.train.Saver()
 # Launch graph
 with tf.Session() as sess:
     # Initialize TensorFlow variables
-    sess.run(tf.global_variables_initializer())
+    # sess.run(tf.global_variables_initializer())
+
+    saver.restore(sess, "/d_drive/model.ckpt")
 
     merged_summary = tf.summary.merge_all()
-    writer = tf.summary.FileWriter("./logs/mylogi")
+    writer = tf.summary.FileWriter("./logs/mylogi2")
     writer.add_graph(sess.graph)
 
-    save_path = saver.save(sess, "/d_drive/model.ckpt")
-    print("Model saved in file: %s" % save_path)
-
     for step in range(iteration):
-        cost_val, _, accr, summary = sess.run([cost, train, accuracy, merged_summary], feed_dict={X: x_data, Y: y_data})
+        accr, summary = sess.run([accuracy, merged_summary], feed_dict={X: x_data, Y: y_data})
 
         writer.add_summary(summary, global_step=step)
 
-        if step % 200 == 0:
-            print(step, cost_val, accr)
+        print(accr)
 
     # Accuracy report
     h, c, a = sess.run([hypothesis, predicted, accuracy],
