@@ -18,7 +18,7 @@ print(numFeatures)
 
 numLabels = 1
 
-learningRate = 0.01
+learningRate = 0.03
 iteration = 100000
 
 # placeholders for a tensor that will be always fed.
