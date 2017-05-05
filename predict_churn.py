@@ -35,16 +35,17 @@ b = tf.Variable(tf.random_normal([1, numLabels],
 layer1 = tf.sigmoid(tf.matmul(X, W) + b)
 
 W2 = tf.Variable(tf.random_normal([numFeatures, numFeatures]), name='weight2')
-b2 = tf.Variable(tf.random_normal([100]), name='bias2')
+b2 = tf.Variable(tf.random_normal([numFeatures]), name='bias2')
 layer2 = tf.sigmoid(tf.matmul(layer1, W2) + b2)
 
 W3 = tf.Variable(tf.random_normal([numFeatures, numFeatures]), name='weight3')
-b3 = tf.Variable(tf.random_normal([10]), name='bias3')
+b3 = tf.Variable(tf.random_normal([numFeatures]), name='bias3')
 layer3 = tf.sigmoid(tf.matmul(layer2, W3) + b3)
 
 W4 = tf.Variable(tf.random_normal([numFeatures, 1]), name='weight4')
 b4 = tf.Variable(tf.random_normal([1]), name='bias4')
 hypothesis = tf.sigmoid(tf.matmul(layer3, W4) + b4)
+
 
 # cost/loss function
 cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
