@@ -36,7 +36,7 @@ iteration = 200000
 X = tf.placeholder(tf.float32, shape=[None, numFeatures])
 Y = tf.placeholder(tf.float32, shape=[None, numLabels])
 
-keep_prop = tf.placeholder(tf.float32)
+keep_prob = tf.placeholder(tf.float32)
 
 # Set Hidden Layer 1
 W = tf.Variable(tf.random_normal([numFeatures, numFeatures],
@@ -44,7 +44,7 @@ W = tf.Variable(tf.random_normal([numFeatures, numFeatures],
 b = tf.Variable(tf.random_normal([1, numLabels],
                                  name="bias"))
 layer1 = tf.sigmoid(tf.matmul(X, W) + b)
-layer1 = tf.nn.dropout(layer1, keep_prop=keep_prop)
+layer1 = tf.nn.dropout(layer1, keep_prob=keep_prob)
 
 # Set Hidden Layer 2
 W2 = tf.Variable(tf.random_normal([numFeatures, numFeatures]), name='weight2')
@@ -100,7 +100,7 @@ with tf.Session() as sess:
     # Traing the model until interation ends.
     for step in range(iteration):
         # train is run wtih x_data, y_data.
-        cost_val, _, accr, summary = sess.run([cost, train, accuracy, merged_summary], feed_dict={X: x_data, Y: y_data, keep_prop: 0.7})
+        cost_val, _, accr, summary = sess.run([cost, train, accuracy, merged_summary], feed_dict={X: x_data, Y: y_data, keep_prob: 0.7})
 
         # Save tensorboard summary while training in in progress.
         writer.add_summary(summary, global_step=step)
@@ -115,11 +115,11 @@ with tf.Session() as sess:
 
     # Accuracy Report
     h, c, a = sess.run([hypothesis, predicted, accuracy],
-                       feed_dict={X: x_data, Y: y_data, keep_prop: 1.0})
+                       feed_dict={X: x_data, Y: y_data, keep_prob: 1.0})
     print("Trains Set Accuracy: ", a)
 
-    cv_h, cv_c, cv_a = sess.run([hypothesis, predicted, cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata, keep_prop: 1.0})
+    cv_h, cv_c, cv_a = sess.run([hypothesis, predicted, cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata, keep_prob: 1.0})
     print("Cross Validation Accuracy: ", cv_a)
 
-    test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata, keep_prop: 1.0})
+    test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata, keep_prob: 1.0})
     print("Test Validation set Accuracy: ", test_accr)
