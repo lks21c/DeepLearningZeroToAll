@@ -3,16 +3,21 @@ import numpy as np
 
 tf.set_random_seed(777)  # for reproducibility
 
-trainX = np.loadtxt('/d_drive/refined_data/logIdCnt/cvUserChurnList.csv', delimiter=',', dtype=np.float32)
+cvX = np.loadtxt('/d_drive/refined_data/logIdCnt/cvUserChurnList.csv', delimiter=',', dtype=np.float32)
 
-x_data = trainX[:, :-1]
-y_data = trainX[:, [-1]]
+x_cvdata = cvX[:, :-1]
+y_cvdata = cvX[:, [-1]]
 
-numFeatures = x_data.shape[1]
+testX = np.loadtxt('/d_drive/refined_data/logIdCnt/testUserChurnList.csv', delimiter=',', dtype=np.float32)
 
-print(trainX.shape)
-print(x_data.shape)
-print(y_data.shape)
+x_testdata = testX[:, :-1]
+y_testdata = testX[:, [-1]]
+
+numFeatures = x_cvdata.shape[1]
+
+print(cvX.shape)
+print(x_cvdata.shape)
+print(y_cvdata.shape)
 print(numFeatures)
 
 numLabels = 1
@@ -46,7 +51,8 @@ hypothesis = tf.sigmoid(tf.matmul(layer3, W4) + b4)
 
 # cost/loss function
 predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
-accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+cv_accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+test_accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
 
 # Add ops to save and restore all the variables.
 saver = tf.train.Saver()
@@ -57,6 +63,8 @@ with tf.Session() as sess:
     saver.restore(sess, "/d_drive/model/model.ckpt")
 
     # Accuracy report
-    h, c, a = sess.run([hypothesis, predicted, accuracy],
-                       feed_dict={X: x_data, Y: y_data})
-    print("\nHypothesis: ", h, "\nCorrect (Y): ", c, "\nAccuracy: ", a)
+    cv_h, cv_c, cv_a = sess.run([hypothesis, predicted, cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata})
+    print("\nCross Validation Hypothesis: ", cv_h, "\nCross Validation Correct (Y): ", cv_c, "\nCross Validation Accuracy: ", cv_a)
+
+    test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata})
+    print("Test Validation set Accuracy: ", test_accr)

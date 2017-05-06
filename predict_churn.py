@@ -102,7 +102,7 @@ with tf.Session() as sess:
     print("\nHypothesis: ", h, "\nCorrect (Y): ", c, "\nAccuracy: ", a)
 
     cv_h, cv_c, cv_a = sess.run([hypothesis, predicted, cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata})
-    print("\nCross Validation Hypothesis: ", h, "\nCross Validation Correct (Y): ", c, "\nCross Validation Accuracy: ", a)
+    print("\nCross Validation Hypothesis: ", cv_h, "\nCross Validation Correct (Y): ", cv_c, "\nCross Validation Accuracy: ", cv_a)
 
     test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata})
     print("Test Validation set Accuracy: ", test_accr)
