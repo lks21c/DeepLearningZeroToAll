@@ -36,36 +36,39 @@ iteration = 200000
 X = tf.placeholder(tf.float32, shape=[None, numFeatures])
 Y = tf.placeholder(tf.float32, shape=[None, numLabels])
 
+keep_prop = tf.placeholder(tf.float32)
+
 # Set Hidden Layer 1
 W = tf.Variable(tf.random_normal([numFeatures, numFeatures],
                                  name="weights"))
 b = tf.Variable(tf.random_normal([1, numLabels],
                                  name="bias"))
-layer1 = tf.nn.relu(tf.matmul(X, W) + b)
+layer1 = tf.sigmoid(tf.matmul(X, W) + b)
+layer1 = tf.nn.dropout(layer1, keep_prop=keep_prop)
 
 # Set Hidden Layer 2
 W2 = tf.Variable(tf.random_normal([numFeatures, numFeatures]), name='weight2')
 b2 = tf.Variable(tf.random_normal([numFeatures]), name='bias2')
-layer2 = tf.nn.relu(tf.matmul(layer1, W2) + b2)
+layer2 = tf.sigmoid(tf.matmul(layer1, W2) + b2)
 
 # Set Hidden Layer 3
 W3 = tf.Variable(tf.random_normal([numFeatures, numFeatures]), name='weight3')
 b3 = tf.Variable(tf.random_normal([numFeatures]), name='bias3')
-layer3 = tf.nn.relu(tf.matmul(layer2, W3) + b3)
+layer3 = tf.sigmoid(tf.matmul(layer2, W3) + b3)
 
 # Set Output Layer
 W4 = tf.Variable(tf.random_normal([numFeatures, 1]), name='weight4')
 b4 = tf.Variable(tf.random_normal([1]), name='bias4')
-hypothesis = tf.matmul(layer3, W4) + b4
+hypothesis = tf.sigmoid(tf.matmul(layer3, W4) + b4)
 
 # Set Cost Function as Cross Entropy.
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=hypothesis,
-                                                              labels=Y))
+cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
+                       tf.log(1 - hypothesis))
 # cost tensor for tensorboard.
 cost_summ = tf.summary.scalar("cost", cost)
 
 # Set default optimizer as GradientDescentOptimizer.
-train = tf.train.AdamOptimizer(learning_rate=learningRate).minimize(cost)
+train = tf.train.GradientDescentOptimizer(learning_rate=learningRate).minimize(cost)
 
 # assums predicted if h(x) exceeds 0.5
 predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
@@ -97,7 +100,7 @@ with tf.Session() as sess:
     # Traing the model until interation ends.
     for step in range(iteration):
         # train is run wtih x_data, y_data.
-        cost_val, _, accr, summary = sess.run([cost, train, accuracy, merged_summary], feed_dict={X: x_data, Y: y_data})
+        cost_val, _, accr, summary = sess.run([cost, train, accuracy, merged_summary], feed_dict={X: x_data, Y: y_data, keep_prop: 0.7})
 
         # Save tensorboard summary while training in in progress.
         writer.add_summary(summary, global_step=step)
@@ -112,11 +115,11 @@ with tf.Session() as sess:
 
     # Accuracy Report
     h, c, a = sess.run([hypothesis, predicted, accuracy],
-                       feed_dict={X: x_data, Y: y_data})
+                       feed_dict={X: x_data, Y: y_data, keep_prop: 1.0})
     print("Trains Set Accuracy: ", a)
 
-    cv_h, cv_c, cv_a = sess.run([hypothesis, predicted, cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata})
+    cv_h, cv_c, cv_a = sess.run([hypothesis, predicted, cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata, keep_prop: 1.0})
     print("Cross Validation Accuracy: ", cv_a)
 
-    test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata})
+    test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata, keep_prop: 1.0})
     print("Test Validation set Accuracy: ", test_accr)
