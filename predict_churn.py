@@ -18,7 +18,7 @@ print(numFeatures)
 numLabels = 1
 
 learningRate = 0.01
-iteration = 100000
+iteration = 200000
 
 # placeholders for a tensor that will be always fed.
 X = tf.placeholder(tf.float32, shape=[None, numFeatures])
@@ -99,10 +99,10 @@ with tf.Session() as sess:
     # Accuracy report
     h, c, a = sess.run([hypothesis, predicted, accuracy],
                        feed_dict={X: x_data, Y: y_data})
-    print("\nHypothesis: ", h, "\nCorrect (Y): ", c, "\nAccuracy: ", a)
+    print("Trains Set Accuracy: ", a)
 
     cv_h, cv_c, cv_a = sess.run([hypothesis, predicted, cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata})
-    print("\nCross Validation Hypothesis: ", cv_h, "\nCross Validation Correct (Y): ", cv_c, "\nCross Validation Accuracy: ", cv_a)
+    print("Cross Validation Accuracy: ", cv_a)
 
     test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata})
     print("Test Validation set Accuracy: ", test_accr)
