@@ -56,11 +56,11 @@ layer3 = tf.nn.relu(tf.matmul(layer2, W3) + b3)
 # Set Output Layer
 W4 = tf.Variable(tf.random_normal([numFeatures, 1]), name='weight4')
 b4 = tf.Variable(tf.random_normal([1]), name='bias4')
-hypothesis = tf.nn.relu(tf.matmul(layer3, W4) + b4)
+hypothesis = tf.matmul(layer3, W4) + b4
 
 # Set Cost Function as Cross Entropy.
-cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
-                       tf.log(1 - hypothesis))
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=hypothesis,
+                                                              labels=Y))
 # cost tensor for tensorboard.
 cost_summ = tf.summary.scalar("cost", cost)
 
