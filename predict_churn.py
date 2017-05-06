@@ -65,7 +65,7 @@ cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
 cost_summ = tf.summary.scalar("cost", cost)
 
 # Set default optimizer as GradientDescentOptimizer.
-train = tf.train.GradientDescentOptimizer(learning_rate=learningRate).minimize(cost)
+train = tf.train.AdamOptimizer(learning_rate=learningRate).minimize(cost)
 
 # assums predicted if h(x) exceeds 0.5
 predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
