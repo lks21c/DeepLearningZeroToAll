@@ -3,7 +3,7 @@ import numpy as np
 
 tf.set_random_seed(777)  # for reproducibility
 
-trainX = np.loadtxt('/d_drive/trainUserChurnList.csv', delimiter=',', dtype=np.float32)
+trainX = np.loadtxt('/d_drive/refined_data/logIdCnt/trainUserChurnList.csv', delimiter=',', dtype=np.float32)
 
 x_data = trainX[:, :-1]
 y_data = trainX[:, [-1]]
@@ -19,7 +19,7 @@ print(numFeatures)
 numLabels = 1
 
 learningRate = 0.01
-iteration = 200000
+iteration = 10000
 
 # placeholders for a tensor that will be always fed.
 X = tf.placeholder(tf.float32, shape=[None, numFeatures])
@@ -63,6 +63,20 @@ accuracy_summ = tf.summary.scalar("accuracy", accuracy)
 # Add ops to save and restore all the variables.
 saver = tf.train.Saver()
 
+cvX = np.loadtxt('/d_drive/refined_data/logIdCnt/cvUserChurnList.csv', delimiter=',', dtype=np.float32)
+
+x_cvdata = cvX[:, :-1]
+y_cvdata = cvX[:, [-1]]
+
+cv_accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+
+testX = np.loadtxt('/d_drive/refined_data/logIdCnt/testUserChurnList.csv', delimiter=',', dtype=np.float32)
+
+x_testdata = testX[:, :-1]
+y_testdata = testX[:, [-1]]
+
+test_accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+
 # Launch graph
 with tf.Session() as sess:
     # Initialize TensorFlow variables
@@ -87,3 +101,9 @@ with tf.Session() as sess:
     h, c, a = sess.run([hypothesis, predicted, accuracy],
                        feed_dict={X: x_data, Y: y_data})
     print("\nHypothesis: ", h, "\nCorrect (Y): ", c, "\nAccuracy: ", a)
+
+    cv_accr = sess.run([cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata})
+    print("Cross Validation set Accuracy: ", cv_accr)
+
+    test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata})
+    print("Test Validation set Accuracy: ", test_accr)
