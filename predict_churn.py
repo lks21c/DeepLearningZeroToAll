@@ -41,22 +41,22 @@ W = tf.Variable(tf.random_normal([numFeatures, numFeatures],
                                  name="weights"))
 b = tf.Variable(tf.random_normal([1, numLabels],
                                  name="bias"))
-layer1 = tf.sigmoid(tf.matmul(X, W) + b)
+layer1 = tf.nn.relu(tf.matmul(X, W) + b)
 
 # Set Hidden Layer 2
 W2 = tf.Variable(tf.random_normal([numFeatures, numFeatures]), name='weight2')
 b2 = tf.Variable(tf.random_normal([numFeatures]), name='bias2')
-layer2 = tf.sigmoid(tf.matmul(layer1, W2) + b2)
+layer2 = tf.nn.relu(tf.matmul(layer1, W2) + b2)
 
 # Set Hidden Layer 3
 W3 = tf.Variable(tf.random_normal([numFeatures, numFeatures]), name='weight3')
 b3 = tf.Variable(tf.random_normal([numFeatures]), name='bias3')
-layer3 = tf.sigmoid(tf.matmul(layer2, W3) + b3)
+layer3 = tf.nn.relu(tf.matmul(layer2, W3) + b3)
 
 # Set Output Layer
 W4 = tf.Variable(tf.random_normal([numFeatures, 1]), name='weight4')
 b4 = tf.Variable(tf.random_normal([1]), name='bias4')
-hypothesis = tf.sigmoid(tf.matmul(layer3, W4) + b4)
+hypothesis = tf.nn.relu(tf.matmul(layer3, W4) + b4)
 
 # Set Cost Function as Cross Entropy.
 cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
