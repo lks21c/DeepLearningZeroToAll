@@ -48,28 +48,13 @@ hypothesis = tf.sigmoid(tf.matmul(layer3, W4) + b4)
 predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
 accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
 
-accuracy_summ = tf.summary.scalar("accuracy", accuracy)
-
 # Add ops to save and restore all the variables.
 saver = tf.train.Saver()
 
 # Launch graph
 with tf.Session() as sess:
-    # Initialize TensorFlow variables
-    # sess.run(tf.global_variables_initializer())
-
+    # Restore Variables
     saver.restore(sess, "/d_drive/model/model.ckpt")
-
-    merged_summary = tf.summary.merge_all()
-    writer = tf.summary.FileWriter("./logs/mylogi2")
-    writer.add_graph(sess.graph)
-
-    for step in range(iteration):
-        accr, summary = sess.run([accuracy, merged_summary], feed_dict={X: x_data, Y: y_data})
-
-        writer.add_summary(summary, global_step=step)
-
-        print(accr)
 
     # Accuracy report
     h, c, a = sess.run([hypothesis, predicted, accuracy],

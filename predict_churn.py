@@ -15,7 +15,6 @@ print(x_data.shape)
 print(y_data.shape)
 print(numFeatures)
 
-
 numLabels = 1
 
 learningRate = 0.01
@@ -86,9 +85,6 @@ with tf.Session() as sess:
     writer = tf.summary.FileWriter("./logs/mylogi")
     writer.add_graph(sess.graph)
 
-    save_path = saver.save(sess, "/d_drive/model/model.ckpt")
-    print("Model saved in file: %s" % save_path)
-
     for step in range(iteration):
         cost_val, _, accr, summary = sess.run([cost, train, accuracy, merged_summary], feed_dict={X: x_data, Y: y_data})
 
@@ -97,13 +93,16 @@ with tf.Session() as sess:
         if step % 200 == 0:
             print(step, cost_val, accr)
 
+    save_path = saver.save(sess, "/d_drive/model/model.ckpt")
+    print("Model saved in file: %s" % save_path)
+
     # Accuracy report
     h, c, a = sess.run([hypothesis, predicted, accuracy],
                        feed_dict={X: x_data, Y: y_data})
     print("\nHypothesis: ", h, "\nCorrect (Y): ", c, "\nAccuracy: ", a)
 
-    cv_accr = sess.run([cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata})
-    print("Cross Validation set Accuracy: ", cv_accr)
+    cv_h, cv_c, cv_a = sess.run([hypothesis, predicted, cv_accuracy], feed_dict={X: x_cvdata, Y: y_cvdata})
+    print("\nCross Validation Hypothesis: ", h, "\nCross Validation Correct (Y): ", c, "\nCross Validation Accuracy: ", a)
 
     test_accr = sess.run([test_accuracy], feed_dict={X: x_testdata, Y: y_testdata})
     print("Test Validation set Accuracy: ", test_accr)
